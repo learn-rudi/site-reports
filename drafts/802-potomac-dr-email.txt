@@ -1,0 +1,43 @@
+Subject: Your Site Analysis Report is Ready - 802 Potomac Dr, Rockwall TX
+
+---
+
+Hi,
+
+Your site analysis report for 802 Potomac Dr, Rockwall, TX 75087 is now available.
+
+VIEW YOUR REPORT:
+https://learn-rudi.github.io/site-reports/reports/802-potomac-dr-rockwall.html
+
+WHAT'S INCLUDED:
+
+Property Profile
+- Lot size, building details, and site characteristics
+- Current zoning classification (PD - Planned Development)
+
+Valuation & Tax Analysis
+- Estimated market value with comparable context
+- Annual tax breakdown and effective rates
+- Historical assessment trends
+
+Location Intelligence
+- Interactive map with nearby amenities and services
+- School ratings and district information (Rockwall ISD)
+- Neighborhood demographics and income data
+
+Risk Assessment
+- Crime statistics relative to state averages
+- Natural hazard considerations
+- Infrastructure proximity
+
+The report is optimized for both screen viewing and printing. Use Cmd+P (Mac) or Ctrl+P (Windows) to generate a print-friendly version.
+
+QUESTIONS?
+Reply to this email if you have questions about the data or need additional analysis.
+
+---
+
+This report was generated using public records from Rockwall County Appraisal District, U.S. Census Bureau, and municipal data sources. Data is current as of February 2026.
+
+Best regards,
+Site Analysis Team

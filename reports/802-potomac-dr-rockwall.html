@@ -349,6 +349,42 @@
       color: var(--accent-red);
     }
 
+    /* External Links */
+    .external-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .external-links-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .external-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-gold);
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid var(--accent-gold);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .external-link:hover {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+    }
+
     /* Metrics Row */
     .metrics-row {
       display: grid;
@@ -1124,6 +1160,23 @@
         text-decoration: underline;
       }
 
+      /* External links - show URLs in print */
+      .external-links {
+        background: #f5f5f5 !important;
+        border: 1px solid #d0d0d0 !important;
+      }
+
+      .external-link {
+        color: #1a1a1a !important;
+        border-color: #666 !important;
+      }
+
+      .external-link::after {
+        content: " (" attr(href) ")";
+        font-size: 9px;
+        color: #666;
+      }
+
       /* Print info */
       @page {
         margin: 0.75in;
@@ -1404,6 +1457,11 @@
               <span class="data-value">No</span>
             </div>
           </div>
+        </div>
+        <div class="external-links">
+          <span class="external-links-label">Compare estimates:</span>
+          <a href="https://www.zillow.com/homes/802-Potomac-Dr-Rockwall-TX-75087_rb/" target="_blank" rel="noopener" class="external-link">View on Zillow ↗</a>
+          <a href="https://www.redfin.com/TX/Rockwall/802-Potomac-Dr-75087/home/119332835" target="_blank" rel="noopener" class="external-link">View on Redfin ↗</a>
         </div>
       </section>
 
