@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Analysis Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0b;
+      color: #fafafa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 600px;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #f5a623 0%, #d4940c 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      color: #0a0a0b;
+    }
+    .brand-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: #a1a1aa;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #71717a;
+      margin-bottom: 40px;
+    }
+    .reports {
+      text-align: left;
+    }
+    .report-card {
+      background: #1c1c1f;
+      border: 1px solid #2a2a2d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 12px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s ease;
+    }
+    .report-card:hover {
+      border-color: #f5a623;
+      transform: translateY(-2px);
+    }
+    .report-address {
+      font-size: 16px;
+      font-weight: 500;
+      color: #fafafa;
+      margin-bottom: 4px;
+    }
+    .report-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #71717a;
+    }
+    .report-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #f5a623;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand">
+      <div class="brand-mark">SA</div>
+      <div class="brand-name">SITE ANALYSIS</div>
+    </div>
+    <h1>Property Reports</h1>
+    <p>Professional site analysis reports powered by AI</p>
+    <div class="reports">
+      <a href="reports/802-potomac-dr-rockwall.html" class="report-card">
+        <div class="report-address">802 Potomac Dr, Rockwall, TX 75087</div>
+        <div class="report-meta">Stone Creek · Rockwall County · Generated Feb 6, 2026</div>
+        <div class="report-value">$737,599</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

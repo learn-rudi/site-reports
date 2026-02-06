@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Analysis | 802 Potomac Dr, Rockwall TX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/maplibre-gl@4.1.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.1.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #0a0a0b;
+      --bg-secondary: #111113;
+      --bg-tertiary: #18181b;
+      --bg-card: #1c1c1f;
+      --border: #2a2a2d;
+      --border-accent: #3a3a3d;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent-gold: #f5a623;
+      --accent-gold-dim: rgba(245, 166, 35, 0.15);
+      --accent-green: #22c55e;
+      --accent-green-dim: rgba(34, 197, 94, 0.15);
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-blue-dim: rgba(59, 130, 246, 0.15);
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #d4940c 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--bg-primary);
+    }
+
+    .brand-name {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .header-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .hero-address {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .hero-coords {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    .hero-value {
+      text-align: right;
+    }
+
+    .value-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .value-amount {
+      font-family: var(--font-mono);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -2px;
+    }
+
+    .value-change {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent-green);
+      margin-top: 4px;
+    }
+
+    .value-psf {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* Quick Stats Bar */
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin: 32px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .stat-item {
+      background: var(--bg-secondary);
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Section */
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .section-number {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      background: var(--accent-gold-dim);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Data Grid */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .data-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .data-card-header {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .data-row:last-child {
+      border-bottom: none;
+    }
+
+    .data-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .data-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: right;
+    }
+
+    .data-value.highlight {
+      color: var(--accent-gold);
+    }
+
+    .data-value.positive {
+      color: var(--accent-green);
+    }
+
+    .data-value.negative {
+      color: var(--accent-red);
+    }
+
+    /* Metrics Row */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .metric-card.accent {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-dim);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .metric-card.accent .metric-value {
+      color: var(--accent-gold);
+    }
+
+    .metric-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* School Rating */
+    .school-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .school-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .school-rating {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .school-level {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .school-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      padding-right: 50px;
+    }
+
+    .school-stat {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .school-stat strong {
+      color: var(--text-primary);
+    }
+
+    /* Tax Breakdown */
+    .tax-breakdown {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .tax-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tax-total-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tax-total-value {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .tax-total-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .tax-bar-container {
+      margin-top: 16px;
+    }
+
+    .tax-bar {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .tax-bar-segment {
+      transition: all 0.3s ease;
+    }
+
+    .tax-bar-segment:hover {
+      filter: brightness(1.2);
+    }
+
+    .tax-legend {
+      display: flex;
+      gap: 24px;
+    }
+
+    .tax-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tax-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .tax-legend-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .tax-legend-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-left: 4px;
+    }
+
+    /* Demographics Visual */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+
+    .demo-bars {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .demo-bar-item {
+      margin-bottom: 16px;
+    }
+
+    .demo-bar-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .demo-bar-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .demo-bar-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .demo-bar-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .demo-bar-track {
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .demo-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-gold) 0%, #d4940c 100%);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    /* Location Badge */
+    .location-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .location-feature {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .location-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-blue-dim);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .location-text {
+      flex: 1;
+    }
+
+    .location-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .location-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Risk Score */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .risk-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .risk-score {
+      font-family: var(--font-mono);
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .risk-score.low { color: var(--accent-green); }
+    .risk-score.medium { color: var(--accent-gold); }
+    .risk-score.high { color: var(--accent-red); }
+
+    .risk-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .risk-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    .footer-disclaimer {
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+
+    .footer-sources {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .footer-brand {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .hero-value {
+        text-align: left;
+      }
+      .quick-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .metrics-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .school-grid {
+        grid-template-columns: 1fr;
+      }
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+      .risk-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero-title {
+        font-size: 28px;
+      }
+      .value-amount {
+        font-size: 36px;
+      }
+      .location-features {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .section:nth-child(2) { animation-delay: 0.1s; }
+    .section:nth-child(3) { animation-delay: 0.2s; }
+    .section:nth-child(4) { animation-delay: 0.3s; }
+    .section:nth-child(5) { animation-delay: 0.4s; }
+    .section:nth-child(6) { animation-delay: 0.5s; }
+
+    /* Map Styles */
+    .map-section {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .map-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+    }
+
+    .map-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10, 10, 11, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      z-index: 10;
+    }
+
+    .map-overlay-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .map-overlay-coords {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .map-legend {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .map-legend-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .legend-item:last-child {
+      border-bottom: none;
+    }
+
+    .legend-marker {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-marker.property { background: var(--accent-gold); box-shadow: 0 0 0 3px var(--accent-gold-dim); }
+    .legend-marker.lake { background: #3b82f6; }
+    .legend-marker.school { background: #22c55e; }
+    .legend-marker.highway { background: #a855f7; }
+
+    .legend-text {
+      flex: 1;
+    }
+
+    .legend-name {
+      font-size: 12px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .legend-dist {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .maplibregl-popup-content {
+      background: var(--bg-secondary) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 6px !important;
+      padding: 12px !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+
+    .maplibregl-popup-tip {
+      border-top-color: var(--bg-secondary) !important;
+    }
+
+    .popup-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      margin-bottom: 4px;
+    }
+
+    .popup-address {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .popup-details {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .map-section {
+        grid-template-columns: 1fr;
+      }
+      .map-legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .map-legend-title {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-mark">SA</div>
+          <div class="brand-name">SITE ANALYSIS</div>
+        </div>
+        <div class="header-meta">
+          <span><span class="status-dot"></span> LIVE DATA</span>
+          <span>REPORT ID: RW-802-2026</span>
+          <span>FEB 06, 2026</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-address">Rockwall County, Texas</div>
+            <h1 class="hero-title">802 Potomac Dr</h1>
+            <p class="hero-subtitle">Stone Creek · The Preserve Phase 1 · Block F, Lot 8</p>
+            <p class="hero-coords">32.9386° N, 96.4622° W · Parcel #000000090163</p>
+          </div>
+          <div class="hero-value">
+            <div class="value-label">Estimated Value</div>
+            <div class="value-amount">$737,599</div>
+            <div class="value-change">▲ +14.5% YoY</div>
+            <div class="value-psf">$195 per sqft · Redfin Estimate</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Map Section -->
+      <div class="map-section">
+        <div class="map-container">
+          <div id="map"></div>
+          <div class="map-overlay">
+            <div class="map-overlay-title">Subject Property</div>
+            <div class="map-overlay-coords">32.9386°N, 96.4622°W</div>
+          </div>
+        </div>
+        <div class="map-legend">
+          <div class="map-legend-title">Points of Interest</div>
+          <div class="legend-item">
+            <div class="legend-marker property"></div>
+            <div class="legend-text">
+              <div class="legend-name">802 Potomac Dr</div>
+              <div class="legend-dist">Subject Property</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-marker lake"></div>
+            <div class="legend-text">
+              <div class="legend-name">Lake Ray Hubbard</div>
+              <div class="legend-dist">~2.5 mi southwest</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-marker school"></div>
+            <div class="legend-text">
+              <div class="legend-name">Celia Hays Elementary</div>
+              <div class="legend-dist">Rockwall ISD</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-marker school"></div>
+            <div class="legend-text">
+              <div class="legend-name">Rockwall High School</div>
+              <div class="legend-dist">Rockwall ISD</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-marker highway"></div>
+            <div class="legend-text">
+              <div class="legend-name">Interstate 30</div>
+              <div class="legend-dist">To Dallas ~25 mi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        <div class="stat-item">
+          <div class="stat-value">3,792</div>
+          <div class="stat-label">Sqft Living</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">0.37</div>
+          <div class="stat-label">Acres</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">5 / 3.5</div>
+          <div class="stat-label">Bed / Bath</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">2019</div>
+          <div class="stat-label">Year Built</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">PD</div>
+          <div class="stat-label">Zoning</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">X</div>
+          <div class="stat-label">Flood Zone</div>
+        </div>
+      </div>
+
+      <!-- Property Details -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">01</span>
+          <h2 class="section-title">Property Profile</h2>
+        </div>
+        <div class="data-grid">
+          <div class="data-card">
+            <div class="data-card-header">Building Characteristics</div>
+            <div class="data-row">
+              <span class="data-label">Living Area</span>
+              <span class="data-value">3,792 sqft</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Bedrooms</span>
+              <span class="data-value">5</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Bathrooms</span>
+              <span class="data-value">3.5</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Year Built</span>
+              <span class="data-value">2019</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Builder</span>
+              <span class="data-value">Megatel Homes</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Style</span>
+              <span class="data-value">Single Family</span>
+            </div>
+          </div>
+          <div class="data-card">
+            <div class="data-card-header">Lot Information</div>
+            <div class="data-row">
+              <span class="data-label">Lot Size</span>
+              <span class="data-value">16,117 sqft</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Acreage</span>
+              <span class="data-value">0.37 acres</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Zoning</span>
+              <span class="data-value highlight">PD (Planned Dev)</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Current Coverage</span>
+              <span class="data-value">23.5%</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Flood Zone</span>
+              <span class="data-value positive">Zone X (Minimal)</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Subdivision</span>
+              <span class="data-value">Stone Creek</span>
+            </div>
+          </div>
+          <div class="data-card">
+            <div class="data-card-header">Subdivision Details</div>
+            <div class="data-row">
+              <span class="data-label">Name</span>
+              <span class="data-value">Stone Creek</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Plat</span>
+              <span class="data-value">The Preserve Ph 1</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Total Lots</span>
+              <span class="data-value">531</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Vacant Lots</span>
+              <span class="data-value">132</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Home Sizes</span>
+              <span class="data-value">1,500 - 4,200 sqft</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">HOA Fee</span>
+              <span class="data-value">$650/year</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Valuation -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">02</span>
+          <h2 class="section-title">Valuation & Market Position</h2>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card accent">
+            <div class="metric-label">Est. Market Value</div>
+            <div class="metric-value">$737,599</div>
+            <div class="metric-sub">Redfin Estimate</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Price / Sqft</div>
+            <div class="metric-value">$195</div>
+            <div class="metric-sub">vs $194 subdivision avg</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Rockwall Median</div>
+            <div class="metric-value">$567K</div>
+            <div class="metric-sub">+14.5% YoY growth</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Stone Creek Median</div>
+            <div class="metric-value">$667K</div>
+            <div class="metric-sub">Active listings</div>
+          </div>
+        </div>
+        <div class="data-grid">
+          <div class="data-card">
+            <div class="data-card-header">Market Comparison</div>
+            <div class="data-row">
+              <span class="data-label">vs Rockwall Median</span>
+              <span class="data-value positive">+30.1% above</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">vs Stone Creek Median</span>
+              <span class="data-value positive">+10.6% above</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">vs Census Tract Median</span>
+              <span class="data-value positive">+92.1% above</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Market Trend</span>
+              <span class="data-value positive">▲ Appreciating</span>
+            </div>
+          </div>
+          <div class="data-card">
+            <div class="data-card-header">Investment Metrics</div>
+            <div class="data-row">
+              <span class="data-label">Est. 3BR Rent (Area)</span>
+              <span class="data-value">$2,599/mo</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Gross Yield (Est.)</span>
+              <span class="data-value">4.2%</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">2024 County Permits</span>
+              <span class="data-value">1,810 units</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Opportunity Zone</span>
+              <span class="data-value">No</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tax Analysis -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">03</span>
+          <h2 class="section-title">Tax Analysis</h2>
+        </div>
+        <div class="tax-breakdown">
+          <div class="tax-header">
+            <div>
+              <div class="tax-total-label">Estimated Annual Property Tax</div>
+              <div class="tax-total-value">$12,367</div>
+              <div class="tax-total-note">Before homestead exemption · Based on 2025 rates</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="tax-total-label">Total Tax Rate</div>
+              <div style="font-family: var(--font-mono); font-size: 24px; font-weight: 600;">$1.6764</div>
+              <div class="tax-total-note">per $100 of assessed value</div>
+            </div>
+          </div>
+          <div class="tax-bar-container">
+            <div class="tax-bar">
+              <div class="tax-bar-segment" style="width: 68.4%; background: #3b82f6;"></div>
+              <div class="tax-bar-segment" style="width: 16.3%; background: #22c55e;"></div>
+              <div class="tax-bar-segment" style="width: 15.3%; background: #f5a623;"></div>
+            </div>
+            <div class="tax-legend">
+              <div class="tax-legend-item">
+                <div class="tax-legend-dot" style="background: #3b82f6;"></div>
+                <span class="tax-legend-label">Rockwall ISD</span>
+                <span class="tax-legend-value">$1.1477 (68.4%)</span>
+              </div>
+              <div class="tax-legend-item">
+                <div class="tax-legend-dot" style="background: #22c55e;"></div>
+                <span class="tax-legend-label">City of Rockwall</span>
+                <span class="tax-legend-value">$0.2740 (16.3%)</span>
+              </div>
+              <div class="tax-legend-item">
+                <div class="tax-legend-dot" style="background: #f5a623;"></div>
+                <span class="tax-legend-label">Rockwall County</span>
+                <span class="tax-legend-value">$0.2547 (15.3%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Schools -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">04</span>
+          <h2 class="section-title">School District Analysis</h2>
+        </div>
+        <div class="school-grid">
+          <div class="school-card">
+            <div class="school-rating">A</div>
+            <div class="school-level">Elementary</div>
+            <div class="school-name">Celia Hays Elementary</div>
+            <div class="school-stat">State Rank: <strong>Top 8%</strong></div>
+            <div class="school-stat">STAAR Reading: <strong>79.8%</strong> proficient</div>
+          </div>
+          <div class="school-card">
+            <div class="school-rating">A</div>
+            <div class="school-level">Middle School</div>
+            <div class="school-name">J.W. Williams Middle</div>
+            <div class="school-stat">State Rank: <strong>#218 of 2,344</strong></div>
+            <div class="school-stat">Rating: <strong>5-Star</strong></div>
+          </div>
+          <div class="school-card">
+            <div class="school-rating">A</div>
+            <div class="school-level">High School</div>
+            <div class="school-name">Rockwall High School</div>
+            <div class="school-stat">State Rank: <strong>Top 7%</strong></div>
+            <div class="school-stat">Avg Score: <strong>84.96</strong></div>
+          </div>
+        </div>
+        <div class="data-grid" style="margin-top: 16px;">
+          <div class="data-card">
+            <div class="data-card-header">Rockwall ISD Performance</div>
+            <div class="data-row">
+              <span class="data-label">Reading Proficiency</span>
+              <span class="data-value">65%</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Math Proficiency</span>
+              <span class="data-value">63%</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">ISD Tax Rate</span>
+              <span class="data-value">$1.1477</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Demographics -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">05</span>
+          <h2 class="section-title">Demographics & Market Profile</h2>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-label">Tract Population</div>
+            <div class="metric-value">7,777</div>
+            <div class="metric-sub">Census Tract 48397040101</div>
+          </div>
+          <div class="metric-card accent">
+            <div class="metric-label">Median HH Income</div>
+            <div class="metric-value">$134K</div>
+            <div class="metric-sub">+70% above national</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Homeownership</div>
+            <div class="metric-value">94.2%</div>
+            <div class="metric-sub">2,584 owner-occupied</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Median Age</div>
+            <div class="metric-value">46.4</div>
+            <div class="metric-sub">Established families</div>
+          </div>
+        </div>
+        <div class="demo-grid">
+          <div class="demo-bars">
+            <div class="data-card-header">Census Tract Indicators</div>
+            <div class="demo-bar-item">
+              <div class="demo-bar-header">
+                <span class="demo-bar-label">Homeownership Rate</span>
+                <span class="demo-bar-value">94.2%</span>
+              </div>
+              <div class="demo-bar-track">
+                <div class="demo-bar-fill" style="width: 94.2%;"></div>
+              </div>
+            </div>
+            <div class="demo-bar-item">
+              <div class="demo-bar-header">
+                <span class="demo-bar-label">Single-Family Detached</span>
+                <span class="demo-bar-value">99.6%</span>
+              </div>
+              <div class="demo-bar-track">
+                <div class="demo-bar-fill" style="width: 99.6%;"></div>
+              </div>
+            </div>
+            <div class="demo-bar-item">
+              <div class="demo-bar-header">
+                <span class="demo-bar-label">Employment Rate</span>
+                <span class="demo-bar-value">98.3%</span>
+              </div>
+              <div class="demo-bar-track">
+                <div class="demo-bar-fill" style="width: 98.3%;"></div>
+              </div>
+            </div>
+            <div class="demo-bar-item">
+              <div class="demo-bar-header">
+                <span class="demo-bar-label">Occupancy Rate</span>
+                <span class="demo-bar-value">98.0%</span>
+              </div>
+              <div class="demo-bar-track">
+                <div class="demo-bar-fill" style="width: 98%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="data-card">
+            <div class="data-card-header">Housing Stock</div>
+            <div class="data-row">
+              <span class="data-label">Total Units</span>
+              <span class="data-value">2,801</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Owner Occupied</span>
+              <span class="data-value">2,584</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Renter Occupied</span>
+              <span class="data-value">160</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Vacant</span>
+              <span class="data-value">57 (2.0%)</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Median Year Built</span>
+              <span class="data-value">2002</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Median Rent</span>
+              <span class="data-value">$2,479</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Location & Risk -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-number">06</span>
+          <h2 class="section-title">Location & Risk Assessment</h2>
+        </div>
+        <div class="location-features">
+          <div class="location-feature">
+            <div class="location-icon">🏖️</div>
+            <div class="location-text">
+              <div class="location-title">Lake Ray Hubbard</div>
+              <div class="location-desc">2.5 miles · 22,000 acres · The Harbor District</div>
+            </div>
+          </div>
+          <div class="location-feature">
+            <div class="location-icon">🚗</div>
+            <div class="location-text">
+              <div class="location-title">Dallas Commute</div>
+              <div class="location-desc">25 miles · 30-35 min via I-30</div>
+            </div>
+          </div>
+          <div class="location-feature">
+            <div class="location-icon">🏛️</div>
+            <div class="location-text">
+              <div class="location-title">Congressional District 4</div>
+              <div class="location-desc">TX Senate 2 · TX House 33</div>
+            </div>
+          </div>
+          <div class="location-feature">
+            <div class="location-icon">🏘️</div>
+            <div class="location-text">
+              <div class="location-title">Stone Creek HOA</div>
+              <div class="location-desc">531 lots · Est. 2009 · $650/yr dues</div>
+            </div>
+          </div>
+        </div>
+        <div class="risk-grid" style="margin-top: 24px;">
+          <div class="risk-card">
+            <div class="risk-label">Crime Risk</div>
+            <div class="risk-score low">LOW</div>
+            <div class="risk-desc">30% below national avg<br>0 homicides (2023)</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-label">Flood Risk</div>
+            <div class="risk-score low">LOW</div>
+            <div class="risk-desc">Zone X<br>Minimal flood hazard</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-label">Vacancy Risk</div>
+            <div class="risk-score low">LOW</div>
+            <div class="risk-desc">2.0% tract vacancy<br>94% homeownership</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-label">Market Risk</div>
+            <div class="risk-score low">LOW</div>
+            <div class="risk-desc">+14.5% YoY growth<br>Strong demand</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p class="footer-disclaimer">
+          This report is generated from public data sources and third-party estimates. Values are approximate and should be verified with official records.
+          This analysis does not constitute financial, legal, or investment advice. Property values, tax rates, and market conditions are subject to change.
+        </p>
+        <p class="footer-sources">
+          Sources: US Census Bureau ACS · Rockwall CAD · FBI UCR · Redfin · Niche · FRED
+        </p>
+        <div class="footer-brand">
+          <p class="footer-brand-text">SITE ANALYSIS · Generated February 6, 2026 · Data Completeness: 80%</p>
+        </div>
+      </footer>
+    </div>
+  </main>
+  <script>
+    // Property coordinates
+    const propertyLng = -96.4622;
+    const propertyLat = 32.9386;
+
+    // Initialize map with dark style
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'carto-dark': {
+            type: 'raster',
+            tiles: [
+              'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+              'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+              'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          }
+        },
+        layers: [{
+          id: 'carto-dark-layer',
+          type: 'raster',
+          source: 'carto-dark',
+          minzoom: 0,
+          maxzoom: 22
+        }]
+      },
+      center: [propertyLng, propertyLat],
+      zoom: 13,
+      attributionControl: false
+    });
+
+    // Add navigation controls
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+    // Points of interest
+    const pois = [
+      {
+        name: '802 Potomac Dr',
+        type: 'property',
+        coords: [propertyLng, propertyLat],
+        details: '$737,599 · 3,792 sqft · 5BR/3.5BA'
+      },
+      {
+        name: 'Lake Ray Hubbard',
+        type: 'lake',
+        coords: [-96.4985, 32.8850],
+        details: '22,000 acres · The Harbor District'
+      },
+      {
+        name: 'Celia Hays Elementary',
+        type: 'school',
+        coords: [-96.4578, 32.9312],
+        details: 'A-Rated · Top 8% in Texas'
+      },
+      {
+        name: 'Rockwall High School',
+        type: 'school',
+        coords: [-96.4598, 32.9245],
+        details: 'A-Rated · Top 7% in Texas'
+      },
+      {
+        name: 'I-30 / Horizon Rd',
+        type: 'highway',
+        coords: [-96.4480, 32.9180],
+        details: 'Access to Dallas ~25 mi'
+      }
+    ];
+
+    // Color mapping
+    const colors = {
+      property: '#f5a623',
+      lake: '#3b82f6',
+      school: '#22c55e',
+      highway: '#a855f7'
+    };
+
+    // Add markers
+    pois.forEach(poi => {
+      // Create marker element
+      const el = document.createElement('div');
+      el.style.width = poi.type === 'property' ? '20px' : '14px';
+      el.style.height = poi.type === 'property' ? '20px' : '14px';
+      el.style.backgroundColor = colors[poi.type];
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid rgba(255,255,255,0.8)';
+      el.style.cursor = 'pointer';
+      el.style.boxShadow = poi.type === 'property'
+        ? '0 0 0 4px rgba(245, 166, 35, 0.3), 0 2px 8px rgba(0,0,0,0.5)'
+        : '0 2px 6px rgba(0,0,0,0.4)';
+
+      // Popup HTML
+      const popupHtml = `
+        <div class="popup-title">${poi.type.toUpperCase()}</div>
+        <div class="popup-address">${poi.name}</div>
+        <div class="popup-details">${poi.details}</div>
+      `;
+
+      // Create popup
+      const popup = new maplibregl.Popup({ offset: 15, closeButton: false })
+        .setHTML(popupHtml);
+
+      // Add marker
+      new maplibregl.Marker({ element: el })
+        .setLngLat(poi.coords)
+        .setPopup(popup)
+        .addTo(map);
+    });
+
+    // Draw line from property to lake
+    map.on('load', () => {
+      map.addSource('route-lake', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [propertyLng, propertyLat],
+              [-96.4985, 32.8850]
+            ]
+          }
+        }
+      });
+
+      map.addLayer({
+        id: 'route-lake-line',
+        type: 'line',
+        source: 'route-lake',
+        paint: {
+          'line-color': '#3b82f6',
+          'line-width': 2,
+          'line-dasharray': [4, 4],
+          'line-opacity': 0.5
+        }
+      });
+    });
+  </script>
+</body>
+</html>
