@@ -919,6 +919,217 @@
         grid-column: 1 / -1;
       }
     }
+
+    /* Print-friendly styles */
+    @media print {
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f5f5;
+        --bg-card: #ffffff;
+        --text-primary: #1a1a1a;
+        --text-secondary: #4a4a4a;
+        --text-tertiary: #666666;
+        --border: #d0d0d0;
+        --accent-gold: #b8860b;
+        --accent-green: #228b22;
+        --accent-red: #cc0000;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #1a1a1a !important;
+      }
+
+      /* Remove decorative elements */
+      body::before,
+      .hero::before,
+      .hero::after {
+        display: none !important;
+      }
+
+      /* Header adjustments */
+      .header {
+        position: static;
+        background: #f5f5f5 !important;
+        border-bottom: 2px solid #1a1a1a;
+      }
+
+      .brand-mark {
+        background: #1a1a1a !important;
+        color: #ffffff !important;
+      }
+
+      .status-dot {
+        background: #228b22 !important;
+      }
+
+      /* Hero section */
+      .hero {
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%) !important;
+        border-bottom: 2px solid #1a1a1a;
+        padding: 40px 0;
+      }
+
+      .hero-title {
+        color: #1a1a1a !important;
+        text-shadow: none !important;
+      }
+
+      .hero-subtitle,
+      .hero-badge,
+      .hero-date {
+        color: #4a4a4a !important;
+      }
+
+      /* Hide interactive map - show placeholder instead */
+      .map-section {
+        page-break-inside: avoid;
+      }
+
+      #map {
+        display: none !important;
+      }
+
+      .map-container::after {
+        content: "Interactive map available in digital version";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+        background: #f0f0f0;
+        border: 2px dashed #999;
+        color: #666;
+        font-style: italic;
+      }
+
+      .map-legend {
+        background: #f5f5f5 !important;
+        border: 1px solid #d0d0d0;
+      }
+
+      /* Cards */
+      .card {
+        background: #ffffff !important;
+        border: 1px solid #d0d0d0 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+
+      .card::before {
+        display: none !important;
+      }
+
+      .card-title {
+        color: #1a1a1a !important;
+        border-bottom: 1px solid #d0d0d0;
+      }
+
+      /* Stats */
+      .stat-value {
+        color: #1a1a1a !important;
+      }
+
+      .stat-label {
+        color: #4a4a4a !important;
+      }
+
+      /* Data rows */
+      .data-row {
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .data-label {
+        color: #4a4a4a !important;
+      }
+
+      .data-value {
+        color: #1a1a1a !important;
+      }
+
+      /* Quick stats */
+      .quick-stats {
+        background: #f5f5f5 !important;
+        border: 1px solid #d0d0d0;
+      }
+
+      .quick-stat-card {
+        background: #ffffff !important;
+        border: 1px solid #d0d0d0 !important;
+      }
+
+      .quick-stat-value {
+        color: #1a1a1a !important;
+      }
+
+      /* Badges and tags */
+      .badge {
+        background: #e8e8e8 !important;
+        color: #1a1a1a !important;
+        border: 1px solid #999;
+      }
+
+      .badge-success {
+        background: #d4edda !important;
+        color: #155724 !important;
+        border-color: #228b22;
+      }
+
+      .badge-warning {
+        background: #fff3cd !important;
+        color: #856404 !important;
+        border-color: #b8860b;
+      }
+
+      /* Sections */
+      .section {
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        color: #1a1a1a !important;
+        border-bottom: 2px solid #1a1a1a;
+      }
+
+      /* Footer */
+      .footer {
+        background: #f5f5f5 !important;
+        border-top: 1px solid #d0d0d0;
+        color: #4a4a4a !important;
+      }
+
+      /* Page breaks */
+      .card {
+        page-break-inside: avoid;
+      }
+
+      h2, h3 {
+        page-break-after: avoid;
+      }
+
+      /* Remove hover effects */
+      .card:hover,
+      .quick-stat-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      /* Ensure text is readable */
+      a {
+        color: #1a1a1a !important;
+        text-decoration: underline;
+      }
+
+      /* Print info */
+      @page {
+        margin: 0.75in;
+        size: letter;
+      }
+    }
   </style>
 </head>
 <body>
